@@ -30,17 +30,17 @@ func (h *hclogger) Info(msg string, keysAndValues ...interface{}) {
 }
 
 // Error prints error message, key must be string, value can be other objects
-func (h *hclogger) Error(msg string, keysAndValues ...interface{}) {
-	h.l.Error(msg, keysAndValues...)
+func (h *hclogger) Error(err error, msg string, keysAndValues ...interface{}) {
+	h.l.Error(msg, append([]interface{}{"err", err}, keysAndValues...)...)
 }
 
-// V changes logger level, 1~2 to Debug, > 2 for Trace, any other will return to Info
+// V changes logger level, 1~2 to Debug, 3~9 for Trace, any other will return to Info
 func (h *hclogger) V(level int) logr.Logger {
 	switch level {
 	case 1, 2:
-		return &hclogger{l: logger, logFunc: logger.Debug}
-	case > 2:
-		return &hclogger{l: logger, logFunc: logger.Trace}
+		return &hclogger{l: h.l, logFunc: h.l.Debug}
+	case 3, 4, 5, 6, 7, 8, 9:
+		return &hclogger{l: h.l, logFunc: h.l.Trace}
 	default:
 		// if not defined will return the default
 		return NewLogger(h.l)
