@@ -35,7 +35,7 @@ func (h *hclogger) Error(err error, msg string, keysAndValues ...interface{}) {
 }
 
 // V changes logger level, 1~2 to Debug, 3~9 for Trace, any other will return to Info
-func (h *hclogger) V(level int) logr.Logger {
+func (h *hclogger) V(level int) logr.InfoLogger {
 	switch level {
 	case 1, 2:
 		return &hclogger{l: h.l, logFunc: h.l.Debug}
